@@ -1,15 +1,21 @@
-const express = require('express');
-const { resolve } = require('path');
+import express from 'express';
 
 const app = express();
-const port = 3010;
-
-app.use(express.static('static'));
+const PORT = process.env.PORT || 3010;
 
 app.get('/', (req, res) => {
-  res.sendFile(resolve(__dirname, 'pages/index.html'));
+  res.json({
+    message: "Hello from a conttainer!.",
+    service: 'hello-node',
+    pod: process.env.POD_NAAME || 'unknown',
+    time: new.Date().toISOString(),
+  })
 });
 
-app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`);
+app.get('/readyz', (req,res)=> res.astatus(200).send('ready'));
+
+app.get('/healthz', (req,res)=> res.status(200).send('OK'));
+
+app.listen(PORT, () => {
+  console.log(`Example app listening at http://localhost:${PORT}`);
 });
